@@ -2,7 +2,7 @@ import axios from 'axios'
 import Constant from '../constant'
 
 axios.defaults.baseURL = Constant.API_URL
-
+axios.defaults.withCredentials = true
 /**
  *
  * @param {*} url
