@@ -5,6 +5,7 @@
   <button @click="getMyPlayList">获取我的歌单</button>
   <button @click="getPlayListDetail">获取歌单详情</button>
   <button @click="getSongsDetail">获取歌单里的歌曲</button>
+  <button @click="getCloudData">获取云盘数据</button>
 </template>
 
 <script>
@@ -58,12 +59,22 @@ export default defineComponent({
       })
     }
 
+    const getCloudData = () => {
+      Api.Cloud.getData({
+        limit: 1000,
+      }).then(res => {
+        console.log(res)
+      })
+    }
+
     onMounted(() => {})
+
     return {
       login,
       getMyPlayList,
       getPlayListDetail,
       getSongsDetail,
+      getCloudData,
     }
   },
 })
