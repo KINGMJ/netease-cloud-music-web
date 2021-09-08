@@ -3,20 +3,30 @@
 
   <button @click="login">登陆测试</button>
   <button @click="getMyPlayList">获取我的歌单</button>
-  <button @click="getPlayListDetail">获取歌单详情</button>
-  <button @click="getSongsDetail">获取歌单里的歌曲</button>
   <button @click="getCloudData">获取云盘数据</button>
   <button @click="getCloudSongDetail">获取云盘音乐详情</button>
 
   <br /><br />
 
-  <div class="playlist-container">
-    <ul>
-      <li v-for="item in playlists" :key="item.id">
-        <span>{{ item.name }}</span>
-        <small>{{ item.track_count }}</small>
-      </li>
-    </ul>
+  <div class="container">
+    <div class="playlist-container">
+      <ul>
+        <li v-for="item in playlists" :key="item.id" @click="getPlayListDetail(item.id)">
+          <span>{{ item.name }}</span>
+          <small>{{ item.track_count }}</small>
+        </li>
+      </ul>
+    </div>
+
+    <div class="songs-container">
+      <ol>
+        <li v-for="item in playlistSongs" :key="item.id">
+          <span>{{ item.name }}</span>
+          <span>213</span>
+          <span>212</span>
+        </li>
+      </ol>
+    </div>
   </div>
 </template>
 
@@ -30,10 +40,11 @@ export default defineComponent({
     // 用户id
     const uid = ref(0)
 
+    // 我的歌单
     const playlists = ref([])
 
-    // 歌单里所有歌曲id
-    const songIds = ref('')
+    // 歌单里所有歌曲
+    const playlistSongs = ref([])
 
     const login = () => {
       Api.Login.phoneLogin({
@@ -47,11 +58,11 @@ export default defineComponent({
       })
     }
 
+    // 获取我的歌单
     const getMyPlayList = () => {
       Api.User.getPlaylist({
         uid: uid.value,
       }).then(res => {
-        console.log(res)
         playlists.value = res.playlist.map(o => {
           return {
             id: o.id,
@@ -65,23 +76,22 @@ export default defineComponent({
       })
     }
 
-    const getPlayListDetail = () => {
+    //获取歌单详情
+    const getPlayListDetail = playlist_id => {
       Api.PlayList.getSongs({
-        playlist_id: 526276431,
+        playlist_id: playlist_id,
       }).then(res => {
         const playlist = res.playlist
         const trackIds = playlist.trackIds
 
-        songIds.value = trackIds.map(o => o.id).join(',')
-        console.log(songIds.value)
-      })
-    }
+        const songIds = trackIds.map(o => o.id).join(',')
 
-    const getSongsDetail = () => {
-      Api.Song.getDetail({
-        song_ids: songIds.value,
-      }).then(res => {
-        console.log(res)
+        Api.Song.getDetail({
+          song_ids: songIds,
+        }).then(res => {
+          playlistSongs.value = res.songs
+          console.log(playlistSongs.value)
+        })
       })
     }
 
@@ -106,9 +116,9 @@ export default defineComponent({
     return {
       login,
       playlists,
+      playlistSongs,
       getMyPlayList,
       getPlayListDetail,
-      getSongsDetail,
       getCloudData,
       getCloudSongDetail,
     }
@@ -138,5 +148,13 @@ export default defineComponent({
 }
 .playlist-container ul li:hover {
   text-decoration: underline;
+}
+
+.container {
+  display: flex;
+}
+
+.songs-container ol {
+  text-align: left;
 }
 </style>
