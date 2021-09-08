@@ -6,6 +6,18 @@
   <button @click="getPlayListDetail">获取歌单详情</button>
   <button @click="getSongsDetail">获取歌单里的歌曲</button>
   <button @click="getCloudData">获取云盘数据</button>
+  <button @click="getCloudSongDetail">获取云盘音乐详情</button>
+
+  <br /><br />
+
+  <div class="playlist-container">
+    <ul>
+      <li v-for="item in playlists" :key="item.id">
+        <span>{{ item.name }}</span>
+        <small>{{ item.track_count }}</small>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>
@@ -18,6 +30,8 @@ export default defineComponent({
     // 用户id
     const uid = ref(0)
 
+    const playlists = ref([])
+
     // 歌单里所有歌曲id
     const songIds = ref('')
 
@@ -26,7 +40,9 @@ export default defineComponent({
         phone: '17621926566',
         password: 'mj13876210361',
       }).then(res => {
+        console.group('登陆成功')
         console.log(res)
+        console.groupEnd()
         uid.value = res.account.id
       })
     }
@@ -36,6 +52,16 @@ export default defineComponent({
         uid: uid.value,
       }).then(res => {
         console.log(res)
+        playlists.value = res.playlist.map(o => {
+          return {
+            id: o.id,
+            name: o.name,
+            cover_image_url: o.coverImgUrl,
+            track_count: o.trackCount,
+          }
+        })
+
+        console.log(playlists.value)
       })
     }
 
@@ -67,15 +93,50 @@ export default defineComponent({
       })
     }
 
+    const getCloudSongDetail = () => {
+      Api.Cloud.getSongDetail({
+        song_id: 27646196,
+      }).then(res => {
+        console.log(res)
+      })
+    }
+
     onMounted(() => {})
 
     return {
       login,
+      playlists,
       getMyPlayList,
       getPlayListDetail,
       getSongsDetail,
       getCloudData,
+      getCloudSongDetail,
     }
   },
 })
 </script>
+
+<style scoped>
+.playlist-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.playlist-container ul {
+  list-style: none;
+  text-align: left;
+}
+
+.playlist-container ul li span {
+  margin-right: 12px;
+}
+
+.playlist-container ul li {
+  color: #42b983;
+  cursor: pointer;
+}
+.playlist-container ul li:hover {
+  text-decoration: underline;
+}
+</style>
