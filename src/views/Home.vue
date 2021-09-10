@@ -64,28 +64,6 @@
     >
       获取云盘数据
     </button>
-
-    <button
-      type="button"
-      class="
-        -ml-px
-        relative
-        inline-flex
-        items-center
-        px-4
-        py-2
-        border border-gray-300
-        bg-white
-        text-sm
-        font-medium
-        text-gray-700
-        hover:bg-gray-50
-        focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500
-      "
-      @click="getCloudSongDetail"
-    >
-      获取云盘音乐详情
-    </button>
   </span>
 
   <br /><br />
@@ -178,17 +156,6 @@
         </div>
       </div>
     </div>
-
-    <!-- <div>
-      <ul role="list" class="divide-y divide-gray-200">
-        <li v-for="item in cloudSongs" :key="item.songId" class="py-4 flex">
-          <div class="ml-3 text-left">
-            <p class="text-sm font-medium text-gray-900">{{ item.songName }}</p>
-            <p class="text-sm text-gray-500">{{ item.songId }}</p>
-          </div>
-        </li>
-      </ul>
-    </div> -->
   </div>
 </template>
 
@@ -261,10 +228,6 @@ export default defineComponent({
             const songInCloud = _.find(cloudSongs.value, o => {
               return o.songId == song.id
             })
-            // console.group('song in cloud')
-            // console.log(songInCloud)
-            // console.groupEnd()
-
             // eslint-disable-next-line no-extra-boolean-cast
             if (!!songInCloud) {
               song.in_cloud = '是'
@@ -291,14 +254,6 @@ export default defineComponent({
       })
     }
 
-    const getCloudSongDetail = () => {
-      Api.Cloud.getSongDetail({
-        song_id: 27646196,
-      }).then(res => {
-        console.log(res)
-      })
-    }
-
     const filterNotInCloudSongs = () => {
       playlistSongs.value = playlistSongsNotInCloud.value
     }
@@ -311,7 +266,6 @@ export default defineComponent({
       getMyPlayList,
       getPlayListDetail,
       getCloudData,
-      getCloudSongDetail,
       filterNotInCloudSongs,
     }
   },
