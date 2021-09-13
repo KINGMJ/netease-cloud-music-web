@@ -1,6 +1,51 @@
 <template>
-  <div class="flex flex-col">
+  <div>
     <h1>云盘数据展示</h1>
+    <span class="relative z-0 inline-flex shadow-sm rounded-md">
+      <button
+        type="button"
+        class="
+          -ml-px
+          relative
+          inline-flex
+          items-center
+          px-4
+          py-2
+          border border-gray-300
+          bg-white
+          text-sm
+          font-medium
+          text-gray-700
+          hover:bg-gray-50
+          focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500
+        "
+        @click="getAllPlayListSongs"
+      >
+        获取我的歌单
+      </button>
+      <button
+        type="button"
+        class="
+          -ml-px
+          relative
+          inline-flex
+          items-center
+          px-4
+          py-2
+          border border-gray-300
+          bg-white
+          text-sm
+          font-medium
+          text-gray-700
+          hover:bg-gray-50
+          focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500
+        "
+        @click="getCloudData"
+      >
+        云盘数据加载
+      </button>
+    </span>
+
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
       <div class="align-middle inline-block min-w-full">
         <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -49,6 +94,12 @@
                     />
                   </svg>
                 </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  是否在歌单
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  所在歌单
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -74,6 +125,16 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ item.fileName.split('.').pop().toLowerCase() }}
                 </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <span
+                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
+                  >
+                    {{ item.inPlaylist ? '是' : '否' }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <p v-for="playlist in item.playlists" :key="playlist.id">{{ playlist.name }}</p>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -86,18 +147,48 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import Api from '../api'
+import _ from 'lodash'
 
 export default defineComponent({
   setup() {
     // 获取云盘歌曲
     const cloudSongs = ref([])
+    const allPlayListSongs = ref([])
+    const uid = 372063478
 
     // 获取云盘的音乐
     const getCloudData = () => {
+      cloudSongs.value = []
       Api.Cloud.getData({
         limit: 1000,
       }).then(res => {
-        cloudSongs.value = res.data
+        cloudSongs.value = res.data.map(item => {
+          const index = _.findIndex(allPlayListSongs.value, o => {
+            return o.id == item.songId
+          })
+          if (~index) {
+            return {
+              songId: item.songId,
+              songName: item.songName,
+              artist: item.artist,
+              fileSize: item.fileSize,
+              fileName: item.fileName,
+              inPlaylist: true,
+              playlists: allPlayListSongs.value[index].playlist,
+            }
+          } else {
+            return {
+              songId: item.songId,
+              songName: item.songName,
+              artist: item.artist,
+              fileSize: item.fileSize,
+              fileName: item.fileName,
+              inPlaylist: false,
+              playlists: [],
+            }
+          }
+        })
+        console.log(cloudSongs.value)
       })
     }
 
@@ -129,14 +220,52 @@ export default defineComponent({
       })
     }
 
-    getCloudData()
+    // 获取我创建的歌单里的所有歌曲
+    const getAllPlayListSongs = () => {
+      allPlayListSongs.value = []
+      Api.User.getPlaylist({
+        uid: uid,
+      }).then(res => {
+        // 获取我创建的歌单
+        const playlistIds = res.playlist.reduce((prev, current) => {
+          if (current.creator.userId == uid) {
+            prev.push(current.id)
+          }
+          return prev
+        }, [])
+
+        for (let id of playlistIds) {
+          Api.PlayList.getSongs({
+            playlist_id: id,
+          }).then(res => {
+            console.log(res)
+            const playlist = res.playlist
+            const trackIds = playlist.trackIds
+
+            for (let item of trackIds) {
+              const index = _.findIndex(allPlayListSongs.value, o => {
+                return o.id == item.id
+              })
+              if (~index) {
+                allPlayListSongs.value[index].playlist.push({ id: playlist.id, name: playlist.name })
+              } else {
+                allPlayListSongs.value.push({ id: item.id, playlist: [{ id: playlist.id, name: playlist.name }] })
+              }
+            }
+            console.log(allPlayListSongs.value)
+          })
+        }
+      })
+    }
 
     return {
       cloudSongs,
+      allPlayListSongs,
       getCloudData,
       getCloudSongDetail,
       sortSongsBySize,
       sortSongsByType,
+      getAllPlayListSongs,
     }
   },
 })
