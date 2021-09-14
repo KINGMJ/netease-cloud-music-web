@@ -44,6 +44,8 @@
       >
         云盘数据加载
       </button>
+
+      <button @click="matchSong">云盘信息匹配</button>
     </span>
 
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -100,6 +102,13 @@
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   所在歌单
                 </th>
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  @click="filterNotInPlaylistSongs"
+                >
+                  过滤
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -115,6 +124,7 @@
                   :title="item.songName"
                 >
                   {{ item.songName }}
+                  ({{ item.songId }})
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ item.artist }}
@@ -153,7 +163,11 @@ export default defineComponent({
   setup() {
     // 获取云盘歌曲
     const cloudSongs = ref([])
+    // 获取所有我创建的歌单的歌曲
     const allPlayListSongs = ref([])
+    // 获取不在歌单中的歌曲
+    const notInPlaylistSongs = ref([])
+
     const uid = 372063478
 
     // 获取云盘的音乐
@@ -177,7 +191,7 @@ export default defineComponent({
               playlists: allPlayListSongs.value[index].playlist,
             }
           } else {
-            return {
+            const song = {
               songId: item.songId,
               songName: item.songName,
               artist: item.artist,
@@ -186,6 +200,8 @@ export default defineComponent({
               inPlaylist: false,
               playlists: [],
             }
+            notInPlaylistSongs.value.push(song)
+            return song
           }
         })
         console.log(cloudSongs.value)
@@ -258,6 +274,21 @@ export default defineComponent({
       })
     }
 
+    // 过滤出不在歌单中的歌曲
+    const filterNotInPlaylistSongs = () => {
+      cloudSongs.value = notInPlaylistSongs.value
+    }
+
+    const matchSong = () => {
+      Api.Cloud.matchSong({
+        uid: uid,
+        song_id: 1498527201,
+        match_id: 26201929,
+      }).then(res => {
+        console.log(res)
+      })
+    }
+
     return {
       cloudSongs,
       allPlayListSongs,
@@ -266,6 +297,8 @@ export default defineComponent({
       sortSongsBySize,
       sortSongsByType,
       getAllPlayListSongs,
+      filterNotInPlaylistSongs,
+      matchSong,
     }
   },
 })
