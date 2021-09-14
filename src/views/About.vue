@@ -45,7 +45,7 @@
         云盘数据加载
       </button>
 
-      <button @click="matchSong">云盘信息匹配</button>
+      <button @click="filterNotInPlaylistSongs">过滤</button>
     </span>
 
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -102,12 +102,8 @@
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   所在歌单
                 </th>
-                <th
-                  scope="col"
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  @click="filterNotInPlaylistSongs"
-                >
-                  过滤
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  上传时间
                 </th>
               </tr>
             </thead>
@@ -145,6 +141,9 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <p v-for="playlist in item.playlists" :key="playlist.id">{{ playlist.name }}</p>
                 </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ parseAddTime(item.addTime) }}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -158,6 +157,7 @@
 import { defineComponent, ref } from 'vue'
 import Api from '../api'
 import _ from 'lodash'
+import dayjs from 'dayjs'
 
 export default defineComponent({
   setup() {
@@ -187,6 +187,7 @@ export default defineComponent({
               artist: item.artist,
               fileSize: item.fileSize,
               fileName: item.fileName,
+              addTime: item.addTime,
               inPlaylist: true,
               playlists: allPlayListSongs.value[index].playlist,
             }
@@ -197,6 +198,7 @@ export default defineComponent({
               artist: item.artist,
               fileSize: item.fileSize,
               fileName: item.fileName,
+              addTime: item.addTime,
               inPlaylist: false,
               playlists: [],
             }
@@ -279,14 +281,11 @@ export default defineComponent({
       cloudSongs.value = notInPlaylistSongs.value
     }
 
-    const matchSong = () => {
-      Api.Cloud.matchSong({
-        uid: uid,
-        song_id: 1498527201,
-        match_id: 26201929,
-      }).then(res => {
-        console.log(res)
-      })
+    const parseAddTime = time => {
+      console.log(time)
+
+      console.log(dayjs(new Date(time)).format('YYYY-MM-ddTHH:mm:ss'))
+      return dayjs(new Date(time)).format('YYYY-MM-DD HH:mm')
     }
 
     return {
@@ -298,7 +297,7 @@ export default defineComponent({
       sortSongsByType,
       getAllPlayListSongs,
       filterNotInPlaylistSongs,
-      matchSong,
+      parseAddTime,
     }
   },
 })
