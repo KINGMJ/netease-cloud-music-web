@@ -1,4 +1,11 @@
 <template>
+  <input
+    type="file"
+    tabindex="-1"
+    ref="fileUploadInput"
+    style="visibility: hidden; position: absolute; top: 0px; left: 0px; height: 0px; width: 0px"
+    @change="uploadFile"
+  />
   <div class="home">网易云盘测试</div>
   <span class="relative z-0 inline-flex shadow-sm rounded-md">
     <button
@@ -386,6 +393,7 @@
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
+                        @click="uploadFileByClick(item)"
                       >
                         <path
                           stroke-linecap="round"
@@ -410,6 +418,7 @@
 import { defineComponent, ref } from 'vue'
 import Api from '../api'
 import _ from 'lodash'
+import axios from 'axios'
 
 export default defineComponent({
   name: 'Home',
@@ -423,8 +432,15 @@ export default defineComponent({
     // 歌单里不在云盘的歌曲
     const playlistSongsNotInCloud = ref([])
 
+    const fileUploadInput = ref(null)
+
     // 获取云盘歌曲
     const cloudSongs = ref([])
+
+    // 要上传的歌曲
+    const uploadSong = ref(null)
+
+    let fileUpdateTime = {}
 
     const login = () => {
       Api.Login.phoneLogin({
@@ -505,6 +521,80 @@ export default defineComponent({
       playlistSongs.value = playlistSongsNotInCloud.value
     }
 
+    const uploadFileByClick = item => {
+      uploadSong.value = item
+      const element = fileUploadInput.value
+      element.value = ''
+      element.click()
+    }
+
+    const uploadFile = event => {
+      const files = event.target.files
+      fileUpdateTime = {}
+      console.group('上传的文件')
+      console.log(files)
+      console.groupEnd()
+
+      let currentIndex = 0,
+        fileLength = files.length
+      for (const item of files) {
+        currentIndex += 1
+        upload(item, currentIndex, fileLength)
+      }
+    }
+
+    const upload = (file, currentIndx, fileLength) => {
+      const formData = new FormData()
+      formData.append('songFile', file)
+      axios({
+        method: 'post',
+        url: `http://localhost:3000/cloud?time=${Date.now()}`,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        data: formData,
+      })
+        .then(res => {
+          console.log(`${file.name} 上传成功`)
+          console.log(res)
+          if (currentIndx >= fileLength) {
+            console.log('上传完毕')
+            const cloudSongId = res.data.privateCloud.songId
+            //上传完后的歌曲id
+            console.log(cloudSongId)
+
+            //上传完后对云盘歌曲进行
+            if (cloudSongId != uploadSong.value.id) {
+              matchSong(cloudSongId, uploadSong.value.id)
+            }
+          }
+        })
+        .catch(async err => {
+          console.log(err)
+          console.log(fileUpdateTime)
+          fileUpdateTime[file.name] ? (fileUpdateTime[file.name] += 1) : (fileUpdateTime[file.name] = 1)
+          if (fileUpdateTime[file.name] >= 4) {
+            console.error(`丢，这首歌怎么都传不上：${file.name}`)
+            return
+          } else {
+            console.error(`${file.name} 失败 ${fileUpdateTime[file.name]} 次`)
+          }
+          upload(file, currentIndx, fileLength)
+        })
+    }
+
+    const matchSong = (cloud_song_id, match_song_id) => {
+      Api.Cloud.matchSong({
+        uid,
+        cloud_song_id,
+        match_song_id,
+      }).then(res => {
+        console.group('云盘歌曲信息纠错')
+        console.log(res)
+        console.groupEnd()
+      })
+    }
+
     return {
       login,
       playlists,
@@ -514,6 +604,10 @@ export default defineComponent({
       getPlayListDetail,
       getCloudData,
       filterNotInCloudSongs,
+      uploadFile,
+      uploadFileByClick,
+      fileUploadInput,
+      matchSong,
     }
   },
 })

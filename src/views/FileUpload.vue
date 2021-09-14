@@ -1,22 +1,35 @@
 <template>
   <input type="file" multiple @change="uploadFile" />
+
+  <button @click="uploadFileByClick">上传测试</button>
+
+  <input
+    type="file"
+    class="dz-hidden-input"
+    tabindex="-1"
+    ref="testInput"
+    style="visibility: hidden; position: absolute; top: 0px; left: 0px; height: 0px; width: 0px"
+    @change="uploadFile"
+  />
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, onMounted, ref } from 'vue'
 import axios from 'axios'
 
 export default defineComponent({
   setup() {
-    const uid = 372063478
-
-    const fileUpdateTime = {}
-
-    console.log(uid)
+    // const uid = 372063478
+    let fileUpdateTime = {}
+    const testInput = ref(null)
 
     const uploadFile = event => {
       const files = event.target.files
+      fileUpdateTime = {}
+      console.group('上传的文件')
       console.log(files)
+      console.groupEnd()
+
       let currentIndex = 0,
         fileLength = files.length
       for (const item of files) {
@@ -60,7 +73,18 @@ export default defineComponent({
         })
     }
 
-    return { uploadFile }
+    onMounted(() => {
+      // the DOM element will be assigned to the ref after initial render
+      console.log(testInput.value) // <div>This is a root element</div>
+    })
+    const uploadFileByClick = () => {
+      const element = testInput.value
+      console.log(element)
+      element.value = ''
+      element.click()
+    }
+
+    return { uploadFile, uploadFileByClick, testInput }
   },
 })
 </script>

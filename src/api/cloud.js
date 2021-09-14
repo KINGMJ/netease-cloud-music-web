@@ -9,8 +9,8 @@ export default {
     return get(`/user/cloud/detail?id=${song_id}`)
   },
 
-  // 云盘歌曲信息匹配
-  matchSong({ uid, song_id, match_id }) {
-    return get(`/cloud/match?uid=${uid}&sid=${song_id}&asid=${match_id}`)
+  //云盘歌曲信息匹
+  matchSong({ uid, cloud_song_id, match_song_id }) {
+    return get(`/cloud/match?uid=${uid}&sid=${cloud_song_id}&asid=${match_song_id}`)
   },
 }
