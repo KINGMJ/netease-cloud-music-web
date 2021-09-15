@@ -14,6 +14,7 @@ module.exports = {
   rules: {
     'no-console': 'off',
     'no-debugger': 'off',
+    'no-unused-vars': 'off',
     'vue/no-unused-vars': 'off',
     'vue/attributes-order': 'off',
     'vue/no-multiple-template-root': 'off',
