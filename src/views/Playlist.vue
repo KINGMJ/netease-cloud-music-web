@@ -336,7 +336,7 @@ export default defineComponent({
   name: 'Playlist',
   props: {
     playlistId: {
-      type: Number,
+      type: [Number, String],
       required: true,
     },
   },
@@ -482,12 +482,10 @@ export default defineComponent({
     }, 3000)
 
     onBeforeRouteUpdate(async (to, from) => {
-      console.log('123')
-      if (to.params.id == from.params.id) {
+      if (to.params.playlistId == from.params.playlistId) {
         return
       }
-      console.log('执行了吗')
-      getPlayListDetail(to.params.id)
+      getPlayListDetail(to.params.playlistId)
     })
 
     const parseAddTime = time => {
