@@ -14,13 +14,17 @@
 <script>
 import { ref } from 'vue'
 import Api from '@/api'
+import { useRouter } from 'vue-router'
 import Sidebar from './components/Sidebar.vue'
 
 export default {
   components: {
     Sidebar,
   },
+
   setup() {
+    const router = useRouter()
+
     // 我的歌单
     const playlists = ref([])
     const uid = 372063478
@@ -39,10 +43,24 @@ export default {
       })
     }
 
-    getMyPlayList()
+    // 跳转到第一个歌单页面
+    const redirectToFirstPlaylist = playlist => {
+      router.push({
+        path: `/playlists/${playlist.id}`,
+      })
+    }
+
+    const bootstrapApp = async () => {
+      await getMyPlayList()
+      if (playlists.value.length == 0) {
+        return
+      }
+      redirectToFirstPlaylist(playlists.value[0])
+    }
+
+    bootstrapApp()
 
     return {
-      getMyPlayList,
       playlists,
     }
   },
