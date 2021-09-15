@@ -20,6 +20,16 @@ const routes = [
     name: 'FileUpload',
     component: () => import('../views/FileUpload.vue'),
   },
+  {
+    path: '/home1',
+    name: 'Home1',
+    component: () => import('../views/Home1.vue'),
+  },
+  {
+    path: '/playlist',
+    name: 'Playlist',
+    component: () => import('../views/Playlist.vue'),
+  },
 ]
 
 const router = createRouter({
