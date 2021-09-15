@@ -8,6 +8,12 @@ const routes = [
     component: Home,
   },
   {
+    path: '/playlists/:playlistId',
+    name: 'Playlists',
+    props: true,
+    component: () => import('../views/Playlist.vue'),
+  },
+  {
     path: '/about',
     name: 'About',
     // route level code-splitting
@@ -24,11 +30,6 @@ const routes = [
     path: '/home1',
     name: 'Home1',
     component: () => import('../views/Home1.vue'),
-  },
-  {
-    path: '/playlist',
-    name: 'Playlist',
-    component: () => import('../views/Playlist.vue'),
   },
 ]
 

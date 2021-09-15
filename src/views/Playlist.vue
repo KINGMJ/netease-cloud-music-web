@@ -9,21 +9,17 @@
 
   <div class="mx-auto container flex">
     <div class="mx-auto container">
-      <div class="flex ml-8 mb-8">
-        <img
-          class="w-60 h-60 rounded-lg mr-3"
-          src="https://p1.music.126.net/W_fiVVPasqeytxfmHdkwxA==/109951165834048703.jpg"
-          alt=""
-        />
+      <div class="flex ml-8 mb-8" v-if="playlist">
+        <img class="w-60 h-60 rounded-lg mr-3" :src="playlist.coverImgUrl" alt="" />
         <div class="ml-4 mt-4 relative">
-          <h1 class="text-3xl text-green-500">轻音乐</h1>
+          <h1 class="text-3xl text-green-500">{{ playlist.name }}</h1>
           <p class="text-gray-400 mt-4 text-sm max-w-lg">
-            这是歌单的简介呀这是歌单的简介呀这是歌单的简介呀这是歌单的简介呀这是歌单的简介呀这是歌单的简介呀这是歌单的简介呀这是歌单的简介呀
+            {{ playlist.description }}
           </p>
           <p class="text-sm mt-6 text-gray-500">
-            <span class="mr-4">19 首歌</span>
+            <span class="mr-4">{{ playlist.trackCount }} 首歌</span>
             <span class="mr-4 text-gray-300">|</span>
-            <span>2021-12-03 创建</span>
+            <span>{{ parseAddTime(playlist.createTime) }} 创建</span>
           </p>
           <div class="flex items-center absolute bottom-1">
             <button
@@ -333,12 +329,22 @@ import { defineComponent, ref } from 'vue'
 import Api from '../api'
 import _ from 'lodash'
 import axios from 'axios'
+import { onBeforeRouteUpdate } from 'vue-router'
+import dayjs from 'dayjs'
 
 export default defineComponent({
   name: 'Playlist',
-  setup() {
+  props: {
+    playlistId: {
+      type: Number,
+      required: true,
+    },
+  },
+  setup(props) {
     // 用户id
     const uid = 372063478
+    // 歌单详情
+    const playlist = ref(null)
     // 歌单里所有歌曲
     const playlistSongs = ref([])
     // 歌单里不在云盘的歌曲
@@ -355,37 +361,29 @@ export default defineComponent({
     let fileUpdateTime = {}
 
     //获取歌单详情
-    const getPlayListDetail = playlist_id => {
-      Api.PlayList.getSongs({
-        playlist_id: playlist_id,
-      }).then(res => {
-        const playlist = res.playlist
-        const trackIds = playlist.trackIds
+    const getPlayListDetail = async playlist_id => {
+      const res = await Api.PlayList.getSongs({ playlist_id })
+      playlist.value = res.playlist
+      console.log(playlist.value)
+      // 歌单所有的歌曲id，用于获取歌单歌曲详情
+      const trackIds = playlist.value.trackIds
+      const songIds = trackIds.map(o => o.id).join(',')
 
-        const songIds = trackIds.map(o => o.id).join(',')
+      // 获取歌单歌曲
+      const res1 = await Api.Song.getDetail({ song_ids: songIds })
+      playlistSongs.value = res1.songs
+      playlistSongsNotInCloud.value = []
 
-        Api.Song.getDetail({
-          song_ids: songIds,
-        }).then(res => {
-          playlistSongs.value = res.songs
-          playlistSongsNotInCloud.value = []
-          res.songs.forEach(song => {
-            const songInCloud = _.find(cloudSongs.value, o => {
-              return o.songId == song.id
-            })
-            // eslint-disable-next-line no-extra-boolean-cast
-            if (!!songInCloud) {
-              song.in_cloud = '是'
-              song.size = (songInCloud.fileSize / 1000 / 1000).toFixed(1) + 'M'
-              song.type = songInCloud.fileName.split('.').pop().toLowerCase()
-            } else {
-              playlistSongsNotInCloud.value.push(song)
-            }
-          })
-
-          console.log(playlistSongs.value)
-          console.log(playlistSongsNotInCloud.value)
-        })
+      res1.songs.forEach(song => {
+        const songInCloud = _.find(cloudSongs.value, o => o.songId == song.id)
+        // eslint-disable-next-line no-extra-boolean-cast
+        if (!!songInCloud) {
+          song.in_cloud = '是'
+          song.size = (songInCloud.fileSize / 1000 / 1000).toFixed(1) + 'M'
+          song.type = songInCloud.fileName.split('.').pop().toLowerCase()
+        } else {
+          playlistSongsNotInCloud.value.push(song)
+        }
       })
     }
 
@@ -480,9 +478,23 @@ export default defineComponent({
     getCloudData()
 
     setTimeout(() => {
-      getPlayListDetail(525913842)
+      getPlayListDetail(props.playlistId)
     }, 3000)
 
+    onBeforeRouteUpdate(async (to, from) => {
+      console.log('123')
+      if (to.params.id == from.params.id) {
+        return
+      }
+      console.log('执行了吗')
+      getPlayListDetail(to.params.id)
+    })
+
+    const parseAddTime = time => {
+      return dayjs(new Date(time)).format('YYYY-MM-DD')
+    }
+
+    console.log(props.playlistId)
     return {
       playlistSongs,
       cloudSongs,
@@ -493,6 +505,8 @@ export default defineComponent({
       uploadFileByClick,
       fileUploadInput,
       matchSong,
+      playlist,
+      parseAddTime,
     }
   },
 })
