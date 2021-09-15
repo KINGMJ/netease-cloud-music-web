@@ -21,14 +21,15 @@
                 :key="item.name"
                 :href="item.href"
                 :class="[
-                  item.current ? 'text-green-500 border-r-2' : 'text-gray-600 hover:text-green-500',
+                  item.index == activeNavigation ? 'text-green-500 border-r-2' : 'text-gray-600 hover:text-green-500',
                   'group my-4 pl-2 flex items-center text-xs font-medium border-green-500',
                 ]"
+                @click="setActiveNavigation(item.index)"
               >
                 <component
                   :is="item.icon"
                   :class="[
-                    item.current ? 'text-green-500' : 'text-gray-400 group-hover:text-green-500',
+                    item.index == activeNavigation ? 'text-green-500' : 'text-gray-400 group-hover:text-green-500',
                     'mr-3 flex-shrink-0 h-6 w-6',
                   ]"
                   aria-hidden="true"
@@ -42,16 +43,18 @@
               <a
                 v-for="item in playlists"
                 :key="item.id"
+                :href="`#/playlists/${item.id}`"
                 :class="[
-                  item.current ? 'text-green-500 border-r-2' : 'text-gray-600',
+                  item.id == activeNavigation ? 'text-green-500 border-r-2' : 'text-gray-600',
                   'group px-2 py-2 flex items-center text-xs font-medium border-green-500 cursor-pointer hover:bg-gray-50',
                 ]"
+                @click="setActiveNavigation(item.id)"
               >
                 <img class="h-10 w-10 rounded-full mr-3" :src="item.cover_image_url" alt="" />
                 <div class="text-xs leading-5 flex flex-col justify-between">
                   <span
                     :class="[
-                      item.current ? 'text-green-500' : 'text-gray-600',
+                      item.id == activeNavigation ? 'text-green-500' : 'text-gray-600',
                       'max-w-xs truncate group-hover:text-green-500',
                     ]"
                     :title="item.name"
@@ -70,24 +73,26 @@
 
 <script>
 import { defineComponent } from 'vue'
-import { BellIcon, HomeIcon, MenuAlt2Icon, XIcon } from '@heroicons/vue/outline'
-import { SearchIcon } from '@heroicons/vue/solid'
+import { CloudIcon } from '@heroicons/vue/outline'
+import useActiveNavigation from '../composables/useActiveNavigation'
 
 export default defineComponent({
   components: {
-    BellIcon,
-    MenuAlt2Icon,
-    SearchIcon,
-    XIcon,
-    HomeIcon,
+    CloudIcon,
   },
   props: {
-    playlists: Array,
+    playlists: {
+      type: Array,
+      required: true,
+    },
   },
   setup(props) {
-    const navigation = [{ name: '云盘', href: '#/about', icon: HomeIcon, current: true }]
+    const { activeNavigation, setActiveNavigation } = useActiveNavigation()
+    const navigation = [{ index: 1, name: '云盘', href: '#/cloud', icon: CloudIcon }]
     return {
       navigation,
+      activeNavigation,
+      setActiveNavigation,
     }
   },
 })
