@@ -16,6 +16,7 @@ import { ref } from 'vue'
 import Api from '@/api'
 import { useRouter } from 'vue-router'
 import Sidebar from './components/Sidebar.vue'
+import useGetCloudSongs from './composables/useGetCloudSongs'
 
 export default {
   components: {
@@ -24,6 +25,7 @@ export default {
 
   setup() {
     const router = useRouter()
+    const { getCloudSongs } = useGetCloudSongs()
 
     // 我的歌单
     const playlists = ref([])
@@ -50,11 +52,13 @@ export default {
       })
     }
 
+    // 应用初始化后需要加载云盘数据以及歌单
     const bootstrapApp = async () => {
       await getMyPlayList()
       if (playlists.value.length == 0) {
         return
       }
+      await getCloudSongs()
       redirectToFirstPlaylist(playlists.value[0])
     }
 
