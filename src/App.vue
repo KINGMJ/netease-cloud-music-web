@@ -26,24 +26,16 @@ export default {
     const uid = 372063478
 
     // 获取我的歌单
-    const getMyPlayList = () => {
-      Api.User.getPlaylist({
-        uid: uid,
-      }).then(res => {
-        playlists.value = res.playlist.map(o => {
-          if (o.name == 'Maple_Joyous喜欢的音乐') {
-            o.current = true
-          } else {
-            o.current = false
-          }
-          return {
-            id: o.id,
-            name: o.name,
-            cover_image_url: o.coverImgUrl,
-            track_count: o.trackCount,
-            current: o.current,
-          }
-        })
+    const getMyPlayList = async () => {
+      const res = await Api.User.getPlaylist({ uid })
+      playlists.value = res.playlist.map(o => {
+        return {
+          id: o.id,
+          name: o.name,
+          cover_image_url: o.coverImgUrl,
+          track_count: o.trackCount,
+          current: o.current,
+        }
       })
     }
 
