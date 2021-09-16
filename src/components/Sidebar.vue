@@ -12,7 +12,7 @@
           <span class="m-4 text-lg font-cabin font-medium tracking-wide text-gray-600">Hello, Jerry Mei</span>
         </div>
 
-        <div class="flex-grow mt-12 flex flex-col">
+        <div class="flex-grow mt-8 flex flex-col">
           <nav class="flex-1 pl-4">
             <div class="mb-8">
               <span class="font-cabin text-xs text-gray-400 tracking-widest inline-block ml-2 mb-4">MENU</span>
@@ -22,7 +22,7 @@
                 :href="item.href"
                 :class="[
                   item.index == activeNavigation ? 'text-green-500 border-r-2' : 'text-gray-600 hover:text-green-500',
-                  'group my-4 pl-2 flex items-center text-xs font-medium border-green-500',
+                  'group mb-4 pl-2 flex items-center text-xs font-medium border-green-500',
                 ]"
                 @click="setActiveNavigation(item.index)"
               >
@@ -38,14 +38,14 @@
               </a>
             </div>
 
-            <div class="mb-8">
+            <div class="mb-8 overflow-y-scroll smart-scrollbar" style="max-height: 61vh">
               <span class="font-cabin text-xs text-gray-400 tracking-widest inline-block ml-2 mb-4">PLAYLIST</span>
               <a
                 v-for="item in playlists"
                 :key="item.id"
                 :href="`#/playlists/${item.id}`"
                 :class="[
-                  item.id == activeNavigation ? 'text-green-500 border-r-2' : 'text-gray-600',
+                  item.id == activeNavigation ? 'text-green-500' : 'text-gray-600',
                   'group px-2 py-2 flex items-center text-xs font-medium border-green-500 cursor-pointer hover:bg-gray-50',
                 ]"
                 @click="setActiveNavigation(item.id)"
