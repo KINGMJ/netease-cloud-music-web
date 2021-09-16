@@ -56,6 +56,6 @@ export default defineComponent({
 
 <style scoped>
 .btn {
-  @apply mr-2 p-2 text-gray-600 border-transparent border bg-gray-100 hover:bg-gray-200 rounded focus:outline-none;
+  @apply mr-2 p-2 text-gray-500 border-transparent border bg-gray-100 hover:bg-gray-200 rounded focus:outline-none;
 }
 </style>

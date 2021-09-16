@@ -10,129 +10,7 @@
   <div class="mx-auto container flex">
     <div class="mx-auto container">
       <playlist-detail v-if="playlist" :playlist="playlist" />
-
-      <div class="flex flex-col">
-        <div class="-my-2 overflow-x-auto">
-          <div class="align-middle inline-block min-w-full">
-            <div class="overflow-y-auto">
-              <table class="w-full whitespace-nowrap">
-                <thead class="">
-                  <tr class="focus:outline-none h-8 w-full text-sm leading-none text-gray-800">
-                    <th
-                      scope="col"
-                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >
-                      歌曲
-                    </th>
-                    <th
-                      scope="col"
-                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >
-                      歌手
-                    </th>
-                    <th
-                      scope="col"
-                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >
-                      大小
-                    </th>
-
-                    <th
-                      scope="col"
-                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >
-                      类型
-                    </th>
-                    <th
-                      scope="col"
-                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >
-                      已上传云盘
-                    </th>
-                    <th
-                      scope="col"
-                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >
-                      <span>操作</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="w-full">
-                  <tr
-                    v-for="(item, index) in playlistSongs"
-                    :key="item.id"
-                    class="
-                      focus:outline-none
-                      h-8
-                      text-sm
-                      leading-none
-                      text-gray-800
-                      bg-white
-                      border-b border-t border-gray-100
-                      group
-                    "
-                    :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-50'"
-                  >
-                    <td class="px-6 py-4 whitespace-nowrap text-left">
-                      <div class="flex items-center">
-                        <div class="text-sm font-medium text-gray-900 group-hover:text-green-500 flex items-center">
-                          <img class="h-9 w-9 rounded-lg mr-3" :src="item.al.picUrl" alt="" />
-                          {{ index + 1 + '. ' + item.name }}
-                          <!-- ({{ item.id }}) -->
-                        </div>
-                      </div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-left">
-                      <div class="text-sm text-gray-900 group-hover:text-green-500">{{ item.ar[0].name }}</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <span
-                        class="
-                          px-2
-                          inline-flex
-                          text-xs
-                          leading-5
-                          font-semibold
-                          rounded-full
-                          bg-green-100
-                          text-green-800 text-left
-                          group-hover:text-green-500
-                        "
-                      >
-                        {{ item.in_cloud }}
-                      </span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-left group-hover:text-green-500">
-                      {{ item.size }}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-left group-hover:text-green-500">
-                      {{ item.type }}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-xs text-left cursor-pointer group-hover:text-green-500">
-                      <svg
-                        v-if="!item.in_cloud"
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        @click="uploadFileByClick(item)"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-                        />
-                      </svg>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
+      <playlist-songs v-if="playlist" :playlist-songs="playlistSongs" />
     </div>
   </div>
 </template>
@@ -145,10 +23,11 @@ import axios from 'axios'
 import { onBeforeRouteUpdate } from 'vue-router'
 import dayjs from 'dayjs'
 import PlaylistDetail from '../components/PlaylistDetail.vue'
+import playlistSongs from '../components/PlaylistSongs.vue'
 
 export default defineComponent({
   name: 'Playlist',
-  components: { PlaylistDetail },
+  components: { PlaylistDetail, playlistSongs },
   props: {
     playlistId: {
       type: [Number, String],
@@ -161,7 +40,6 @@ export default defineComponent({
     const uid = 372063478
     // 歌单详情
     const playlist = ref(null)
-
     // 歌单里所有歌曲
     const playlistSongs = ref([])
 
