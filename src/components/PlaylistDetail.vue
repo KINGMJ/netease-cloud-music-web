@@ -1,5 +1,5 @@
 <template>
-  <div class="flex ml-8 mb-8" v-if="playlist">
+  <div class="flex ml-8 mb-8">
     <img class="w-60 h-60 rounded-lg mr-3" :src="playlist.coverImgUrl" alt="" />
     <div class="ml-4 mt-4 relative">
       <h1 class="text-3xl text-green-500">{{ playlist.name }}</h1>
@@ -9,7 +9,7 @@
       <p class="text-sm mt-6 text-gray-500">
         <span class="mr-4">{{ playlist.trackCount }} 首歌</span>
         <span class="mr-4 text-gray-300">|</span>
-        <span>{{ playlist.createTime }} 创建</span>
+        <span>{{ parseDate(playlist.createTime) }} 创建</span>
       </p>
       <div class="flex items-center absolute bottom-1">
         <button
@@ -191,6 +191,7 @@
 
 <script>
 import { defineComponent } from 'vue'
+import useUtils from '../composables/useUtils'
 
 export default defineComponent({
   name: 'PlaylistDetail',
@@ -200,6 +201,12 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props) {},
+  setup(props) {
+    const { parseDate } = useUtils()
+
+    return {
+      parseDate,
+    }
+  },
 })
 </script>
