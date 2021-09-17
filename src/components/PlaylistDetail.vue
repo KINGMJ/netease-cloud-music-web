@@ -9,7 +9,7 @@
       <p class="text-sm mt-6 text-gray-500">
         <span class="mr-4">{{ playlist.trackCount }} 首歌</span>
         <span class="mr-4 text-gray-300">|</span>
-        <span>{{ parseDate(playlist.createTime) }} 创建</span>
+        <span>{{ dateFormat(playlist.createTime) }} 创建</span>
       </p>
       <div class="flex items-center absolute bottom-1">
         <button class="btn">
@@ -45,10 +45,10 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { parseDate } = useUtils()
+    const { dateFormat } = useUtils()
 
     return {
-      parseDate,
+      dateFormat,
     }
   },
 })
