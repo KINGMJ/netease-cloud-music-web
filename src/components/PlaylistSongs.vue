@@ -32,14 +32,14 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span class="badge">
-                    {{ item.in_cloud }}
+                    {{ item.inCloud ? '是' : '' }}
                   </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-left group-hover:text-green-500">
-                  {{ item.size }}
+                  {{ fileSizeFormat(item.fileSize) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-left group-hover:text-green-500">
-                  {{ item.type }}
+                  {{ fileTypeFormat(item.fileName) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-xs text-left cursor-pointer group-hover:text-green-500">
                   <CloudUploadIcon
@@ -60,7 +60,7 @@
 <script>
 import { defineComponent } from 'vue'
 import { CloudUploadIcon } from '@heroicons/vue/outline'
-
+import useUtils from '../composables/useUtils'
 export default defineComponent({
   components: {
     CloudUploadIcon,
@@ -72,9 +72,12 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const tableCol = ['歌曲', '歌手', '大小', '类型', '已上传云盘', '操作']
+    const { fileSizeFormat, fileTypeFormat } = useUtils()
+    const tableCol = ['歌曲', '歌手', '已上传云盘', '大小', '类型', '操作']
     return {
       tableCol,
+      fileSizeFormat,
+      fileTypeFormat,
     }
   },
 })

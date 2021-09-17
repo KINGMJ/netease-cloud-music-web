@@ -63,12 +63,13 @@ export default defineComponent({
       const res1 = await Api.Song.getDetail({ song_ids: songIds })
       playlistSongs.value = res1.songs
 
+      // 如果歌曲在云盘中，追加云盘中歌曲的信息
       res1.songs.forEach(song => {
         const songInCloud = _.find(cloudSongs.value, o => o.songId == song.id)
         if (songInCloud) {
-          song.in_cloud = true
-          song.size = (songInCloud.fileSize / 1000 / 1000).toFixed(1) + 'M'
-          song.type = songInCloud.fileName.split('.').pop().toLowerCase()
+          song.inCloud = true
+          song.fileSize = songInCloud.fileSize
+          song.fileName = songInCloud.fileName
         }
       })
     }
