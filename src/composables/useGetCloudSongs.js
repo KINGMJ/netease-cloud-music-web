@@ -1,14 +1,13 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import Api from '../api'
 import Constant from '../constant'
 
+const cloudSongs = ref([])
+
 /**
- *
  * 云盘数据加载
  */
 export default function useGetCloudSongs() {
-  const cloudSongs = ref([])
-
   // 获取云盘的音乐
   const getCloudSongs = async () => {
     const res = await Api.Cloud.getData({ limit: Constant.CLOUD_SONG_LIMIT })
@@ -16,7 +15,7 @@ export default function useGetCloudSongs() {
   }
 
   return {
-    cloudSongs,
     getCloudSongs,
+    cloudSongs: computed(() => cloudSongs.value),
   }
 }

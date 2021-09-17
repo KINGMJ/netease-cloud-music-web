@@ -6,7 +6,6 @@
     style="visibility: hidden; position: absolute; top: 0px; left: 0px; height: 0px; width: 0px"
     @change="uploadFile"
   />
-
   <div class="mx-auto container flex">
     <div class="mx-auto container">
       <playlist-detail v-if="playlist" :playlist="playlist" />
@@ -21,9 +20,9 @@ import Api from '../api'
 import _ from 'lodash'
 import axios from 'axios'
 import { onBeforeRouteUpdate } from 'vue-router'
-import dayjs from 'dayjs'
 import PlaylistDetail from '../components/PlaylistDetail.vue'
 import playlistSongs from '../components/PlaylistSongs.vue'
+import useGetCloudSongs from '../composables/useGetCloudSongs.js'
 
 export default defineComponent({
   name: 'Playlist',
@@ -36,6 +35,7 @@ export default defineComponent({
   },
 
   setup(props) {
+    const { cloudSongs } = useGetCloudSongs()
     // 用户id
     const uid = 372063478
     // 歌单详情
@@ -43,13 +43,7 @@ export default defineComponent({
     // 歌单里所有歌曲
     const playlistSongs = ref([])
 
-    // 歌单里不在云盘的歌曲
-    const playlistSongsNotInCloud = ref([])
-
     const fileUploadInput = ref(null)
-
-    // 获取云盘歌曲
-    const cloudSongs = ref([])
 
     // 要上传的歌曲
     const uploadSong = ref(null)
@@ -58,6 +52,9 @@ export default defineComponent({
 
     //获取歌单详情
     const getPlayListDetail = async playlist_id => {
+      console.group('云盘')
+      console.log(cloudSongs)
+      console.groupEnd()
       const res = await Api.PlayList.getSongs({ playlist_id })
       playlist.value = res.playlist
       // console.log(playlist.value)
@@ -68,23 +65,15 @@ export default defineComponent({
       // 获取歌单歌曲
       const res1 = await Api.Song.getDetail({ song_ids: songIds })
       playlistSongs.value = res1.songs
-      playlistSongsNotInCloud.value = []
 
       res1.songs.forEach(song => {
         const songInCloud = _.find(cloudSongs.value, o => o.songId == song.id)
-        // eslint-disable-next-line no-extra-boolean-cast
-        if (!!songInCloud) {
+        if (songInCloud) {
           song.in_cloud = '是'
           song.size = (songInCloud.fileSize / 1000 / 1000).toFixed(1) + 'M'
           song.type = songInCloud.fileName.split('.').pop().toLowerCase()
-        } else {
-          playlistSongsNotInCloud.value.push(song)
         }
       })
-    }
-
-    const filterNotInCloudSongs = () => {
-      playlistSongs.value = playlistSongsNotInCloud.value
     }
 
     const uploadFileByClick = item => {
@@ -172,23 +161,15 @@ export default defineComponent({
       getPlayListDetail(to.params.playlistId)
     })
 
-    const parseAddTime = time => {
-      return dayjs(new Date(time)).format('YYYY-MM-DD')
-    }
-
-    console.log(props.playlistId)
-
     return {
       playlistSongs,
-      cloudSongs,
       getPlayListDetail,
-      filterNotInCloudSongs,
       uploadFile,
       uploadFileByClick,
       fileUploadInput,
       matchSong,
       playlist,
-      parseAddTime,
+      cloudSongs,
     }
   },
 })
