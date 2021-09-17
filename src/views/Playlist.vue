@@ -52,9 +52,6 @@ export default defineComponent({
 
     //获取歌单详情
     const getPlayListDetail = async playlist_id => {
-      console.group('云盘')
-      console.log(cloudSongs)
-      console.groupEnd()
       const res = await Api.PlayList.getSongs({ playlist_id })
       playlist.value = res.playlist
       // console.log(playlist.value)
@@ -69,7 +66,7 @@ export default defineComponent({
       res1.songs.forEach(song => {
         const songInCloud = _.find(cloudSongs.value, o => o.songId == song.id)
         if (songInCloud) {
-          song.in_cloud = '是'
+          song.in_cloud = true
           song.size = (songInCloud.fileSize / 1000 / 1000).toFixed(1) + 'M'
           song.type = songInCloud.fileName.split('.').pop().toLowerCase()
         }
