@@ -6,8 +6,8 @@ import { ref } from 'vue'
 export default function useActiveNavigation() {
   const activeNavigation = ref(0)
 
-  const setActiveNavigation = index => {
-    activeNavigation.value = index
+  const setActiveNavigation = url => {
+    activeNavigation.value = url
   }
 
   return {

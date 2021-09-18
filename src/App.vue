@@ -40,7 +40,7 @@ export default {
           name: o.name,
           cover_image_url: o.coverImgUrl,
           track_count: o.trackCount,
-          current: o.current,
+          url: `#/playlists/${o.id}`,
         }
       })
     }
