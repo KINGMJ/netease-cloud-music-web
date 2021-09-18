@@ -59,7 +59,10 @@ export default {
         return
       }
       await getCloudSongs()
-      redirectToFirstPlaylist(playlists.value[0])
+
+      if (window.location.hash == '#/') {
+        redirectToFirstPlaylist(playlists.value[0])
+      }
     }
 
     bootstrapApp()
