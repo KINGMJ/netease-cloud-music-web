@@ -18,7 +18,7 @@
         <button class="btn">
           <CogIcon class="w-4 h-4" />
         </button>
-        <button class="btn" title="过滤出不在云盘中的歌曲">
+        <button class="btn" title="过滤出不在云盘中的歌曲" @click="$emit('handle-click-filter')">
           <FilterIcon class="w-4 h-4" />
         </button>
       </div>
@@ -44,6 +44,7 @@ export default defineComponent({
       required: true,
     },
   },
+  emits: ['handle-click-filter'],
   setup(props) {
     const { dateFormat } = useUtils()
 

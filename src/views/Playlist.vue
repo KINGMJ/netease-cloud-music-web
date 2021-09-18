@@ -8,7 +8,7 @@
   />
   <div class="mx-auto container flex">
     <div class="mx-auto container">
-      <playlist-detail v-if="playlist" :playlist="playlist" />
+      <playlist-detail v-if="playlist" :playlist="playlist" @handle-click-filter="filterNotInCloudSongs" />
       <playlist-songs v-if="playlist" :playlist-songs="playlistSongs" />
     </div>
   </div>
@@ -148,10 +148,16 @@ export default defineComponent({
       })
     }
 
+    // 过滤出不在云盘中的歌曲
+    const filterNotInCloudSongs = () => {
+      playlistSongs.value = playlistSongs.value.filter(song => !song.inCloud)
+    }
+
     setTimeout(() => {
       getPlayListDetail(props.playlistId)
-    }, 3000)
+    }, 1000)
 
+    // 切换歌单后，重新加载
     onBeforeRouteUpdate(async (to, from) => {
       if (to.params.playlistId == from.params.playlistId) {
         return
@@ -168,6 +174,7 @@ export default defineComponent({
       matchSong,
       playlist,
       cloudSongs,
+      filterNotInCloudSongs,
     }
   },
 })
