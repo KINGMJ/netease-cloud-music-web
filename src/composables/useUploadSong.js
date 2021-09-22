@@ -2,6 +2,8 @@ import { ref, computed } from 'vue'
 import Api from '../api'
 import Constant from '../constant'
 
+// 用户id
+const uid = 372063478
 // 要上传的歌单歌曲
 const uploadedSong = ref(null)
 
@@ -37,10 +39,10 @@ export default function useUploadSong() {
       console.log('上传完毕')
       //上传完后的歌曲id
       const cloudSongId = res.privateCloud.songId
-      // //上传完后对云盘歌曲进行
-      // if (cloudSongId != uploadSong.value.id) {
-      //   matchSong(cloudSongId, uploadSong.value.id)
-      // }
+      //上传完后对云盘歌曲进行
+      if (cloudSongId != uploadSong.value.id) {
+        matchSong(cloudSongId, uploadSong.value.id)
+      }
     }
   }
 
@@ -53,6 +55,10 @@ export default function useUploadSong() {
       console.error(`${file.name} 失败 ${fileUpdateTime[file.name]} 次`)
     }
     upload(file, currentIndx, fileLength)
+  }
+
+  const matchSong = async (cloud_song_id, match_song_id) => {
+    await Api.Cloud.matchSong({ uid, cloud_song_id, match_song_id })
   }
 
   const setUploadedSong = song => {

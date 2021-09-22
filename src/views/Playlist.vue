@@ -32,8 +32,6 @@ export default defineComponent({
     const { cloudSongs } = useGetCloudSongs()
     const { uploadSong, setUploadedSong } = useUploadSong()
 
-    // 用户id
-    const uid = 372063478
     // 歌单详情
     const playlist = ref(null)
     // 歌单里所有歌曲
