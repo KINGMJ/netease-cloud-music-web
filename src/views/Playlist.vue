@@ -1,16 +1,10 @@
 <template>
-  <input
-    type="file"
-    tabindex="-1"
-    ref="fileUploadInput"
-    style="visibility: hidden; position: absolute; top: 0px; left: 0px; height: 0px; width: 0px"
-    @change="uploadFile"
-  />
   <div class="mx-auto container flex">
     <div class="mx-auto container">
       <playlist-detail v-if="playlist" :playlist="playlist" @handle-click-filter="filterNotInCloudSongs" />
-      <playlist-songs v-if="playlist" :playlist-songs="playlistSongs" />
+      <playlist-songs v-if="playlist" :playlist-songs="playlistSongs" @handle-click-upload="uploadSongByClick" />
     </div>
+    <input type="file" tabindex="-1" ref="fileUploadInput" class="file-input" @change="uploadSong" />
   </div>
 </template>
 
@@ -18,11 +12,11 @@
 import { defineComponent, ref } from 'vue'
 import Api from '../api'
 import _ from 'lodash'
-import axios from 'axios'
 import { onBeforeRouteUpdate } from 'vue-router'
 import PlaylistDetail from '../components/PlaylistDetail.vue'
 import playlistSongs from '../components/PlaylistSongs.vue'
-import useGetCloudSongs from '../composables/useGetCloudSongs.js'
+import useGetCloudSongs from '../composables/useGetCloudSongs'
+import useUploadSong from '../composables/useUploadSong'
 
 export default defineComponent({
   name: 'Playlist',
@@ -36,19 +30,16 @@ export default defineComponent({
 
   setup(props) {
     const { cloudSongs } = useGetCloudSongs()
+    const { uploadSong, setUploadedSong } = useUploadSong()
+
     // 用户id
     const uid = 372063478
     // 歌单详情
     const playlist = ref(null)
     // 歌单里所有歌曲
     const playlistSongs = ref([])
-
+    // 上传文件的表单
     const fileUploadInput = ref(null)
-
-    // 要上传的歌曲
-    const uploadSong = ref(null)
-
-    let fileUpdateTime = {}
 
     //获取歌单详情
     const getPlayListDetail = async playlist_id => {
@@ -74,78 +65,12 @@ export default defineComponent({
       })
     }
 
-    const uploadFileByClick = item => {
-      uploadSong.value = item
+    // 通过模拟点击去上传文件
+    const uploadSongByClick = song => {
+      setUploadedSong(song)
       const element = fileUploadInput.value
       element.value = ''
       element.click()
-    }
-
-    const uploadFile = event => {
-      const files = event.target.files
-      fileUpdateTime = {}
-      console.group('上传的文件')
-      console.log(files)
-      console.groupEnd()
-
-      let currentIndex = 0,
-        fileLength = files.length
-      for (const item of files) {
-        currentIndex += 1
-        upload(item, currentIndex, fileLength)
-      }
-    }
-
-    const upload = (file, currentIndx, fileLength) => {
-      const formData = new FormData()
-      formData.append('songFile', file)
-      axios({
-        method: 'post',
-        url: `http://localhost:3000/cloud?time=${Date.now()}`,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        data: formData,
-      })
-        .then(res => {
-          console.log(`${file.name} 上传成功`)
-          console.log(res)
-          if (currentIndx >= fileLength) {
-            console.log('上传完毕')
-            const cloudSongId = res.data.privateCloud.songId
-            //上传完后的歌曲id
-            console.log(cloudSongId)
-
-            //上传完后对云盘歌曲进行
-            if (cloudSongId != uploadSong.value.id) {
-              matchSong(cloudSongId, uploadSong.value.id)
-            }
-          }
-        })
-        .catch(async err => {
-          console.log(err)
-          console.log(fileUpdateTime)
-          fileUpdateTime[file.name] ? (fileUpdateTime[file.name] += 1) : (fileUpdateTime[file.name] = 1)
-          if (fileUpdateTime[file.name] >= 4) {
-            console.error(`丢，这首歌怎么都传不上：${file.name}`)
-            return
-          } else {
-            console.error(`${file.name} 失败 ${fileUpdateTime[file.name]} 次`)
-          }
-          upload(file, currentIndx, fileLength)
-        })
-    }
-
-    const matchSong = (cloud_song_id, match_song_id) => {
-      Api.Cloud.matchSong({
-        uid,
-        cloud_song_id,
-        match_song_id,
-      }).then(res => {
-        console.group('云盘歌曲信息纠错')
-        console.log(res)
-        console.groupEnd()
-      })
     }
 
     // 过滤出不在云盘中的歌曲
@@ -168,14 +93,19 @@ export default defineComponent({
     return {
       playlistSongs,
       getPlayListDetail,
-      uploadFile,
-      uploadFileByClick,
       fileUploadInput,
-      matchSong,
       playlist,
       cloudSongs,
       filterNotInCloudSongs,
+      uploadSongByClick,
+      uploadSong,
     }
   },
 })
 </script>
+
+<style scoped>
+.file-input {
+  @apply invisible absolute w-0 h-0 top-0 left-0;
+}
+</style>

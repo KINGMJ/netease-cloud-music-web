@@ -43,9 +43,9 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-xs text-left cursor-pointer group-hover:text-green-500">
                   <CloudUploadIcon
-                    v-if="!item.in_cloud"
+                    v-if="!item.inCloud"
                     class="w-5 h-5 opacity-0 group-hover:opacity-100"
-                    @click="uploadFileByClick(item)"
+                    @click="$emit('handle-click-upload', item)"
                   />
                 </td>
               </tr>
@@ -71,6 +71,7 @@ export default defineComponent({
       required: true,
     },
   },
+  emits: ['handle-click-upload'],
   setup(props) {
     const { fileSizeFormat, fileTypeFormat } = useUtils()
     const tableCol = ['歌曲', '歌手', '已上传云盘', '大小', '类型', '操作']
