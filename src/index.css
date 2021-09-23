@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+* 滚动条的样式
+*/
+.smart-scrollbar {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.smart-scrollbar::-webkit-scrollbar {
+  width: 3px;
+  height: 12px;
+}
+
+.smart-scrollbar::-webkit-scrollbar-button:end:increment,
+.smart-scrollbar::-webkit-scrollbar-button:start:decrement {
+  display: none;
+  background: 0 0;
+}
+
+.smart-scrollbar::-webkit-scrollbar-track-piece {
+  background: #d6dadc;
+}
+
+.smart-scrollbar::-webkit-scrollbar-track-piece:vertical:start {
+  border-radius: 5px 5px 0 0;
+}
+
+.smart-scrollbar::-webkit-scrollbar-track-piece:vertical:end {
+  border-radius: 0 0 5px 5px;
+}
+
+.smart-scrollbar::-webkit-scrollbar-track-piece:horizontal:start {
+  border-radius: 5px 0 0 5px;
+}
+
+.smart-scrollbar::-webkit-scrollbar-track-piece:horizontal:end {
+  border-radius: 0 5px 5px 0;
+}
+
+.smart-scrollbar::-webkit-scrollbar-thumb:horizontal,
+.smart-scrollbar::-webkit-scrollbar-thumb:vertical {
+  display: block;
+  height: 50px;
+  border-radius: 5px;
+  background: grey;
+}
