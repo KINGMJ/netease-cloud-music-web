@@ -90,7 +90,7 @@ export default defineComponent({
 }
 
 .tr {
-  @apply focus:outline-none h-8 text-sm leading-none text-gray-800 bg-white border-b border-t border-gray-100 group;
+  @apply focus:outline-none h-6 text-sm leading-none text-gray-800  border-b border-t border-gray-100 group;
 }
 
 .badge {

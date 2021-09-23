@@ -87,7 +87,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const navigation = [{ index: 1, name: '云盘', href: '#/home1', icon: CloudIcon }]
+    const navigation = [{ index: 1, name: '云盘', href: '#/cloud', icon: CloudIcon }]
     return {
       navigation,
       activeNavigation,

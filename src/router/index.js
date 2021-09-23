@@ -27,6 +27,11 @@ const routes = [
     component: () => import('../views/FileUpload.vue'),
   },
   {
+    path: '/cloud',
+    name: 'Cloud',
+    component: () => import('../views/Cloud.vue'),
+  },
+  {
     path: '/home1',
     name: 'Home1',
     component: () => import('../views/Home1.vue'),
