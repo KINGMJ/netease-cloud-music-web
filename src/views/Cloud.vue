@@ -18,54 +18,9 @@
         <table class="w-full whitespace-nowrap">
           <thead>
             <tr class="focus:outline-none h-8 w-full text-sm leading-none text-gray-800">
-              <th scope="col" class="th">标题</th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                歌手
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <span>大小</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6 cursor-pointer"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  @click="sortSongsBySize"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
-                  />
-                </svg>
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <span>类型</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6 cursor-pointer"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  @click="sortSongsByType"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
-                  />
-                </svg>
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                是否在歌单
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                所在歌单
-              </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                上传时间
+              <th v-for="(item, index) in tableCol" :key="index" scope="col" class="th">
+                <span>{{ item.name }}</span>
+                <component :is="item.icon" class="text-gray-500 w-5 h-5 inline cursor-pointer ml-1" />
               </th>
             </tr>
           </thead>
@@ -73,35 +28,29 @@
             <tr
               v-for="(item, index) in cloudSongs"
               :key="item.songId"
-              class="text-left"
+              class="tr"
               :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-50'"
               @click="getCloudSongDetail(item.songId)"
             >
               <td
-                class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 max-w-xs truncate"
+                class="px-6 py-4 whitespace-nowrap text-left font-medium text-gray-900 max-w-xs truncate"
                 :title="item.songName"
               >
                 {{ item.songName }}
-                ({{ item.songId }})
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td class="px-6 py-4 whitespace-nowrap text-left font-medium text-gray-900 max-w-xs truncate">
                 {{ item.artist }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-left">
                 {{ (item.fileSize / 1000 / 1000).toFixed(1) + 'M' }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-left">
                 {{ item.fileName.split('.').pop().toLowerCase() }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                  {{ item.inPlaylist ? '是' : '否' }}
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-left">
                 <p v-for="playlist in item.playlists" :key="playlist.id">{{ playlist.name }}</p>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-left">
                 {{ parseAddTime(item.addTime) }}
               </td>
             </tr>
@@ -114,7 +63,7 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-import { PencilAltIcon, CogIcon, FilterIcon } from '@heroicons/vue/outline'
+import { PencilAltIcon, CogIcon, FilterIcon, SortAscendingIcon } from '@heroicons/vue/outline'
 import Api from '../api'
 import _ from 'lodash'
 import dayjs from 'dayjs'
@@ -124,8 +73,18 @@ export default defineComponent({
     PencilAltIcon,
     CogIcon,
     FilterIcon,
+    // SortAscendingIcon,
   },
   setup() {
+    const tableCol = [
+      { name: '歌曲' },
+      { name: '歌手' },
+      { name: '大小', icon: SortAscendingIcon },
+      { name: '类型', icon: SortAscendingIcon },
+      { name: '所在歌单' },
+      { name: '上传时间' },
+    ]
+
     // 获取云盘歌曲
     const cloudSongs = ref([])
     // 获取所有我创建的歌单的歌曲
@@ -269,6 +228,7 @@ export default defineComponent({
       getAllPlayListSongs,
       filterNotInPlaylistSongs,
       parseAddTime,
+      tableCol,
     }
   },
 })
