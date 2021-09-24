@@ -36,14 +36,16 @@
               class="tr"
               :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-50'"
             >
-              <td class="td group-hover:text-green-500" :title="item.songName">{{ item.songName }}</td>
-              <td class="td group-hover:text-green-500">{{ item.artist }}</td>
-              <td class="td group-hover:text-green-500">{{ fileSizeFormat(item.fileSize) }}</td>
-              <td class="td group-hover:text-green-500">{{ fileTypeFormat(item.fileName) }}</td>
-              <td class="td group-hover:text-green-500">
-                <p v-for="playlist in item.playlists" :key="playlist.id">{{ playlist.name }}</p>
+              <td class="td font-medium text-gray-900 group-hover:text-green-500" :title="item.songName">
+                {{ item.songName }}
               </td>
-              <td class="td group-hover:text-green-500">{{ timeFormat(item.addTime) }}</td>
+              <td class="td text-gray-900 group-hover:text-green-500">{{ item.artist }}</td>
+              <td class="td text-gray-500 group-hover:text-green-500">{{ fileSizeFormat(item.fileSize) }}</td>
+              <td class="td text-gray-500 group-hover:text-green-500">{{ fileTypeFormat(item.fileName) }}</td>
+              <td class="td text-gray-500 group-hover:text-green-500">
+                <p v-for="playlist in item.playlists" :key="playlist.id" class="mb-1 text-xs">{{ playlist.name }}</p>
+              </td>
+              <td class="td text-gray-500 group-hover:text-green-500">{{ timeFormat(item.addTime) }}</td>
             </tr>
           </tbody>
         </table>
@@ -207,7 +209,7 @@ export default defineComponent({
 }
 
 .tr {
-  @apply focus:outline-none h-6 text-sm leading-none text-gray-800  border-b border-t border-gray-100 group;
+  @apply focus:outline-none h-6 text-sm leading-none border-b border-t border-gray-100 group;
 }
 
 .btn {
@@ -219,6 +221,6 @@ export default defineComponent({
 }
 
 .td {
-  @apply px-6 py-4 whitespace-nowrap text-left font-medium text-gray-900 max-w-xs truncate;
+  @apply px-6 py-4 whitespace-nowrap text-left max-w-xs truncate;
 }
 </style>
