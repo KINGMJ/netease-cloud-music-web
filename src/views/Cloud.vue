@@ -25,7 +25,11 @@
             <tr class="focus:outline-none h-8 w-full text-sm leading-none text-gray-800">
               <th v-for="(item, index) in tableCol" :key="index" scope="col" class="th">
                 <span>{{ item.name }}</span>
-                <component :is="item.icon" class="text-gray-500 w-5 h-5 inline cursor-pointer ml-1" />
+                <component
+                  :is="item.icon"
+                  class="text-gray-500 w-5 h-5 inline cursor-pointer ml-1"
+                  @click="item.event()"
+                />
               </th>
             </tr>
           </thead>
@@ -72,8 +76,8 @@ export default defineComponent({
     const tableCol = [
       { name: '歌曲' },
       { name: '歌手' },
-      { name: '大小', icon: SortAscendingIcon },
-      { name: '类型', icon: SortAscendingIcon },
+      { name: '大小', icon: SortAscendingIcon, event: () => sortSongsBySize() },
+      { name: '类型', icon: SortAscendingIcon, event: () => sortSongsByType() },
       { name: '所在歌单' },
       { name: '上传时间' },
     ]
@@ -130,13 +134,13 @@ export default defineComponent({
     })
 
     const sortSongsBySize = () => {
-      cloudSongs.value.sort((a, b) => {
+      filteredSongs.value.sort((a, b) => {
         return a.fileSize - b.fileSize
       })
     }
 
     const sortSongsByType = () => {
-      cloudSongs.value.sort((a, b) => {
+      filteredSongs.value.sort((a, b) => {
         const nameA = a.fileName.split('.').pop().toLowerCase()
         const nameB = b.fileName.split('.').pop().toLowerCase()
         if (nameA < nameB) {
@@ -189,14 +193,12 @@ export default defineComponent({
 
     return {
       tableCol,
-      getCloudData,
-      sortSongsBySize,
-      sortSongsByType,
-      getAllPlayListSongs,
       filteredSongs,
       timeFormat,
       fileTypeFormat,
       fileSizeFormat,
+      sortSongsBySize,
+      sortSongsByType,
       filterOn,
     }
   },
