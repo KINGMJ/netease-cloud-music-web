@@ -12,6 +12,11 @@ const routes = [
     name: 'Cloud',
     component: () => import('../views/Cloud.vue'),
   },
+  {
+    path: '/test',
+    name: 'Test',
+    component: () => import('../views/Test.vue'),
+  },
 ]
 
 const router = createRouter({
