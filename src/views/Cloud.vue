@@ -42,6 +42,7 @@
             >
               <td class="td font-medium text-gray-900 group-hover:text-green-500" :title="item.songName">
                 {{ item.songName }}
+                <!-- {{ item.songId }} -->
               </td>
               <td class="td text-gray-900 group-hover:text-green-500">{{ item.artist }}</td>
               <td class="td text-gray-500 group-hover:text-green-500">{{ fileSizeFormat(item.fileSize) }}</td>
@@ -59,12 +60,13 @@
 </template>
 
 <script>
-import { computed, defineComponent, ref } from 'vue'
-import { PencilAltIcon, CogIcon, FilterIcon, SortAscendingIcon } from '@heroicons/vue/outline'
-import useGetCloudSongs from '../composables/useGetCloudSongs'
-import useUtils from '../composables/useUtils'
 import Api from '../api'
 import _ from 'lodash'
+import { computed, defineComponent, ref } from 'vue'
+import { PencilAltIcon, CogIcon, FilterIcon, SortAscendingIcon, SortDescendingIcon } from '@heroicons/vue/outline'
+import useGetCloudSongs from '../composables/useGetCloudSongs'
+import useUtils from '../composables/useUtils'
+import useSortSongs from '../composables/useSortSongs'
 
 export default defineComponent({
   components: {
@@ -73,17 +75,26 @@ export default defineComponent({
     FilterIcon,
   },
   setup() {
-    const tableCol = [
-      { name: '歌曲' },
-      { name: '歌手' },
-      { name: '大小', icon: SortAscendingIcon, event: () => sortSongsBySize() },
-      { name: '类型', icon: SortAscendingIcon, event: () => sortSongsByType() },
-      { name: '所在歌单' },
-      { name: '上传时间' },
-    ]
     // 云盘歌曲
     const { cloudSongs } = useGetCloudSongs()
     const { timeFormat, fileTypeFormat, fileSizeFormat } = useUtils()
+    const { sortSequence, sortBySize } = useSortSongs()
+
+    const tableCol = computed(() => {
+      return [
+        { name: '歌曲' },
+        { name: '歌手' },
+        {
+          name: '大小',
+          icon: sortSequence.value ? SortAscendingIcon : SortDescendingIcon,
+          event: () => sortBySize(filteredSongs.value),
+        },
+        { name: '类型', icon: SortAscendingIcon, event: () => sortSongsByType() },
+        { name: '所在歌单' },
+        { name: '上传时间' },
+      ]
+    })
+
     // 所有我创建的歌单的歌曲
     const allPlayListSongs = ref([])
     // 是否开启过滤
@@ -132,12 +143,6 @@ export default defineComponent({
     const filteredSongs = computed(() => {
       return filterOn.value ? notInPlaylistSongs.value : cloudSongsWithPlaylist.value
     })
-
-    const sortSongsBySize = () => {
-      filteredSongs.value.sort((a, b) => {
-        return a.fileSize - b.fileSize
-      })
-    }
 
     const sortSongsByType = () => {
       filteredSongs.value.sort((a, b) => {
@@ -194,12 +199,11 @@ export default defineComponent({
     return {
       tableCol,
       filteredSongs,
+      filterOn,
       timeFormat,
       fileTypeFormat,
       fileSizeFormat,
-      sortSongsBySize,
       sortSongsByType,
-      filterOn,
     }
   },
 })
