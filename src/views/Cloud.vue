@@ -78,7 +78,7 @@ export default defineComponent({
     // 云盘歌曲
     const { cloudSongs } = useGetCloudSongs()
     const { timeFormat, fileTypeFormat, fileSizeFormat } = useUtils()
-    const { sortSequence, sortBySize } = useSortSongs()
+    const { sortSequence, sortBySize, sortByType } = useSortSongs()
 
     const tableCol = computed(() => {
       return [
@@ -89,7 +89,11 @@ export default defineComponent({
           icon: sortSequence.value ? SortAscendingIcon : SortDescendingIcon,
           event: () => sortBySize(filteredSongs.value),
         },
-        { name: '类型', icon: SortAscendingIcon, event: () => sortSongsByType() },
+        {
+          name: '类型',
+          icon: sortSequence.value ? SortAscendingIcon : SortDescendingIcon,
+          event: () => sortByType(filteredSongs.value),
+        },
         { name: '所在歌单' },
         { name: '上传时间' },
       ]
@@ -144,20 +148,6 @@ export default defineComponent({
       return filterOn.value ? notInPlaylistSongs.value : cloudSongsWithPlaylist.value
     })
 
-    const sortSongsByType = () => {
-      filteredSongs.value.sort((a, b) => {
-        const nameA = a.fileName.split('.').pop().toLowerCase()
-        const nameB = b.fileName.split('.').pop().toLowerCase()
-        if (nameA < nameB) {
-          return -1
-        }
-        if (nameA > nameB) {
-          return 1
-        }
-        return 0
-      })
-    }
-
     // 获取我创建的歌单里的所有歌曲
     const getAllPlayListSongs = async () => {
       const res = await Api.User.getPlaylist({ uid })
@@ -203,7 +193,6 @@ export default defineComponent({
       timeFormat,
       fileTypeFormat,
       fileSizeFormat,
-      sortSongsByType,
     }
   },
 })
