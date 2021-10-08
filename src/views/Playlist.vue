@@ -1,8 +1,14 @@
 <template>
-  <div class="mx-auto container flex flex-col">
-    <playlist-detail v-if="playlist" :playlist="playlist" @handle-click-filter="filterNotInCloudSongs" />
-    <playlist-songs v-if="playlist" :playlist-songs="playlistSongs" @handle-click-upload="uploadSongByClick" />
-    <input type="file" tabindex="-1" ref="fileUploadInput" class="file-input" @change="uploadSong" />
+  <div class="flex-1 w-0 flex flex-col">
+    <main class="flex-1 relative overflow-y-auto focus:outline-none bg-white m-6 p-6 rounded-lg smart-scrollbar">
+      <div class="px-4 sm:px-6 md:px-0">
+        <div class="mx-auto container flex flex-col">
+          <playlist-detail v-if="playlist" :playlist="playlist" @handle-click-filter="filterNotInCloudSongs" />
+          <playlist-songs v-if="playlist" :playlist-songs="playlistSongs" @handle-click-upload="uploadSongByClick" />
+          <input type="file" tabindex="-1" ref="fileUploadInput" class="file-input" @change="uploadSong" />
+        </div>
+      </div>
+    </main>
   </div>
 </template>
 

@@ -1,61 +1,69 @@
 <template>
-  <div class="mx-auto container flex flex-col">
-    <div class="flex ml-4 mb-8">
-      <div class="flex items-center bottom-1">
-        <button class="btn">
-          <PencilAltIcon class="w-4 h-4" />
-        </button>
-        <button class="btn">
-          <CogIcon class="w-4 h-4" />
-        </button>
-        <button
-          class="btn"
-          :class="filterOn ? 'filter-on' : ''"
-          title="过滤出不在歌单中的歌曲"
-          @click="filterOn = !filterOn"
-        >
-          <FilterIcon class="w-4 h-4" />
-        </button>
+  <div class="flex-1 w-0 flex flex-col">
+    <main class="flex-1 relative overflow-y-auto focus:outline-none bg-white m-6 p-6 rounded-lg smart-scrollbar">
+      <div class="px-4 sm:px-6 md:px-0">
+        <div class="mx-auto container flex flex-col">
+          <div class="flex ml-4 mb-8">
+            <div class="flex items-center bottom-1">
+              <button class="btn">
+                <PencilAltIcon class="w-4 h-4" />
+              </button>
+              <button class="btn">
+                <CogIcon class="w-4 h-4" />
+              </button>
+              <button
+                class="btn"
+                :class="filterOn ? 'filter-on' : ''"
+                title="过滤出不在歌单中的歌曲"
+                @click="filterOn = !filterOn"
+              >
+                <FilterIcon class="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+          <div class="-my-2 overflow-x-auto">
+            <div class="align-middle inline-block min-w-full overflow-y-auto">
+              <table class="w-full whitespace-nowrap">
+                <thead>
+                  <tr class="focus:outline-none h-8 w-full text-sm leading-none text-gray-800">
+                    <th v-for="(item, index) in tableCol" :key="index" scope="col" class="th">
+                      <span>{{ item.name }}</span>
+                      <component
+                        :is="item.icon"
+                        class="text-gray-500 w-5 h-5 inline cursor-pointer ml-1"
+                        @click="item.event()"
+                      />
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="(item, index) in filteredSongs"
+                    :key="item.songId"
+                    class="tr"
+                    :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-50'"
+                  >
+                    <td class="td font-medium text-gray-900 group-hover:text-green-500" :title="item.songName">
+                      {{ item.songName }}
+                      <!-- {{ item.songId }} -->
+                    </td>
+                    <td class="td text-gray-900 group-hover:text-green-500">{{ item.artist }}</td>
+                    <td class="td text-gray-500 group-hover:text-green-500">{{ fileSizeFormat(item.fileSize) }}</td>
+                    <td class="td text-gray-500 group-hover:text-green-500">{{ fileTypeFormat(item.fileName) }}</td>
+                    <td class="td text-gray-500 group-hover:text-green-500">
+                      <p v-for="playlist in item.playlists" :key="playlist.id" class="mb-1 text-xs">
+                        {{ playlist.name }}
+                      </p>
+                    </td>
+                    <td class="td text-gray-500 group-hover:text-green-500">{{ timeFormat(item.addTime) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="-my-2 overflow-x-auto">
-      <div class="align-middle inline-block min-w-full overflow-y-auto">
-        <table class="w-full whitespace-nowrap">
-          <thead>
-            <tr class="focus:outline-none h-8 w-full text-sm leading-none text-gray-800">
-              <th v-for="(item, index) in tableCol" :key="index" scope="col" class="th">
-                <span>{{ item.name }}</span>
-                <component
-                  :is="item.icon"
-                  class="text-gray-500 w-5 h-5 inline cursor-pointer ml-1"
-                  @click="item.event()"
-                />
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="(item, index) in filteredSongs"
-              :key="item.songId"
-              class="tr"
-              :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-50'"
-            >
-              <td class="td font-medium text-gray-900 group-hover:text-green-500" :title="item.songName">
-                {{ item.songName }}
-                <!-- {{ item.songId }} -->
-              </td>
-              <td class="td text-gray-900 group-hover:text-green-500">{{ item.artist }}</td>
-              <td class="td text-gray-500 group-hover:text-green-500">{{ fileSizeFormat(item.fileSize) }}</td>
-              <td class="td text-gray-500 group-hover:text-green-500">{{ fileTypeFormat(item.fileName) }}</td>
-              <td class="td text-gray-500 group-hover:text-green-500">
-                <p v-for="playlist in item.playlists" :key="playlist.id" class="mb-1 text-xs">{{ playlist.name }}</p>
-              </td>
-              <td class="td text-gray-500 group-hover:text-green-500">{{ timeFormat(item.addTime) }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    </main>
   </div>
 </template>
 
