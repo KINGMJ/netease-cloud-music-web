@@ -11,6 +11,7 @@ import Api from '@/api'
 import { useRouter } from 'vue-router'
 import Sidebar from './components/Sidebar.vue'
 import useGetCloudSongs from './composables/useGetCloudSongs'
+import Cookies from 'js-cookie'
 
 export default {
   components: {
@@ -48,6 +49,7 @@ export default {
 
     // 应用初始化后需要加载云盘数据以及歌单
     const bootstrapApp = async () => {
+      console.log(Cookies.get('MUSIC_U'))
       await getMyPlayList()
       if (playlists.value.length == 0) {
         return

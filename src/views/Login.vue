@@ -29,14 +29,11 @@
           <div class="mt-6">
             <div class="space-y-6">
               <div>
-                <label for="email" class="block text-sm font-medium text-gray-700"> 手机号 </label>
+                <label class="block text-sm font-medium text-gray-700"> 手机号 </label>
                 <div class="mt-1">
                   <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autocomplete="email"
-                    required=""
+                    type="text"
+                    v-model="phone"
                     class="
                       appearance-none
                       block
@@ -55,14 +52,11 @@
               </div>
 
               <div class="space-y-1">
-                <label for="password" class="block text-sm font-medium text-gray-700"> 密码 </label>
+                <label class="block text-sm font-medium text-gray-700"> 密码 </label>
                 <div class="mt-1">
                   <input
-                    id="password"
-                    name="password"
                     type="password"
-                    autocomplete="current-password"
-                    required=""
+                    v-model="password"
                     class="
                       appearance-none
                       block
@@ -82,7 +76,6 @@
 
               <div>
                 <button
-                  type="submit"
                   class="
                     w-full
                     flex
@@ -99,6 +92,7 @@
                     hover:bg-green-600
                     focus:outline-none
                   "
+                  @click="login"
                 >
                   登录
                 </button>
@@ -110,3 +104,39 @@
     </div>
   </div>
 </template>
+
+<script>
+import { defineComponent, ref } from 'vue'
+import Api from '../api'
+import useProfile from '../composables/useProfile'
+import { useRouter } from 'vue-router'
+
+export default defineComponent({
+  setup() {
+    const phone = ref(null)
+    const password = ref(null)
+    const { setProfile } = useProfile()
+    const router = useRouter()
+
+    const login = async () => {
+      const res = await Api.Login.phoneLogin({ phone: phone.value, password: password.value })
+      if (res.code !== 200) {
+        return
+      }
+      setProfile({ ...res.profile })
+      redirectToHome()
+    }
+
+    // 跳转到首页
+    const redirectToHome = () => {
+      router.push({ path: '/' })
+    }
+
+    return {
+      login,
+      phone,
+      password,
+    }
+  },
+})
+</script>
