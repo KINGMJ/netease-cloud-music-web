@@ -1,7 +1,7 @@
 import { get } from './api-client'
 
 export default {
-  getPlaylist({ uid }) {
+  getPlaylists({ uid }) {
     return get(`user/playlist?uid=${uid}`)
   },
 }
