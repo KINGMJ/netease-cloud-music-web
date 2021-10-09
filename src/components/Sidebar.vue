@@ -4,12 +4,8 @@
       <!-- Sidebar component, swap this element with another sidebar if you like -->
       <div class="shadow-md pt-8 pb-4 flex flex-col flex-grow overflow-y-auto">
         <div class="flex-shrink-0 px-4 flex flex-col items-center justify-center">
-          <img
-            class="inline-block h-28 w-28 rounded-full shadow-md custom-shadow-md"
-            src="../assets/avatar.jpeg"
-            alt="Workflow"
-          />
-          <span class="m-4 text-lg font-cabin font-medium tracking-wide text-gray-600">Hello, Jerry Mei</span>
+          <img class="inline-block h-28 w-28 rounded-full shadow-md custom-shadow-md" :src="avatarUrl" alt="Workflow" />
+          <span class="m-4 text-lg font-cabin font-medium tracking-wide text-gray-600">Hello, {{ nickname }}</span>
         </div>
 
         <div class="flex-grow mt-8 flex flex-col">
@@ -83,6 +79,14 @@ export default defineComponent({
   props: {
     playlists: {
       type: Array,
+      required: true,
+    },
+    nickname: {
+      type: String,
+      required: true,
+    },
+    avatarUrl: {
+      type: String,
       required: true,
     },
   },
