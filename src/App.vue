@@ -1,6 +1,6 @@
 <template>
   <div class="h-screen bg-indigo-50 overflow-hidden flex">
-    <sidebar :playlists="playlists" v-if="isLoggedIn" />
+    <sidebar v-if="isLoggedIn" :playlists="playlists" :nickname="nickname" :avatar-url="avatarUrl" />
     <router-view />
   </div>
 </template>
@@ -10,6 +10,7 @@ import Sidebar from './components/Sidebar.vue'
 import useGetCloudSongs from './composables/useGetCloudSongs'
 import useGetPlaylists from './composables/useGetPlaylists'
 import useLoginStatus from './composables/useLoginStatus'
+import useProfile from './composables/useProfile'
 import { useRouter } from 'vue-router'
 
 export default {
@@ -21,6 +22,7 @@ export default {
     const { getCloudSongs } = useGetCloudSongs()
     const { getMyPlayLists, playlists } = useGetPlaylists()
     const { isLoggedIn } = useLoginStatus()
+    const { nickname, avatarUrl } = useProfile()
     const router = useRouter()
 
     // 应用初始化后需要加载云盘数据以及歌单
@@ -47,6 +49,8 @@ export default {
     return {
       playlists,
       isLoggedIn,
+      nickname,
+      avatarUrl,
     }
   },
 }
