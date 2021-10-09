@@ -6,12 +6,11 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import Sidebar from './components/Sidebar.vue'
 import useGetCloudSongs from './composables/useGetCloudSongs'
 import useProfile from './composables/useProfile'
 import useGetPlaylists from './composables/useGetPlaylists'
+import { useRouter } from 'vue-router'
 
 export default {
   components: {
@@ -19,17 +18,10 @@ export default {
   },
 
   setup() {
-    const router = useRouter()
     const { getCloudSongs } = useGetCloudSongs()
     const { isLoggedIn } = useProfile()
     const { getMyPlayLists, playlists } = useGetPlaylists()
-
-    // 跳转到第一个歌单页面
-    const redirectToFirstPlaylist = playlist => {
-      router.push({
-        path: `/playlists/${playlist.id}`,
-      })
-    }
+    const router = useRouter()
 
     // 应用初始化后需要加载云盘数据以及歌单
     const bootstrapApp = async () => {
@@ -42,7 +34,9 @@ export default {
       }
       await getCloudSongs()
       if (window.location.hash == '#/') {
-        redirectToFirstPlaylist(playlists.value[0])
+        router.push({
+          path: `/playlists/${playlists.value[0].id}`,
+        })
       }
     }
 

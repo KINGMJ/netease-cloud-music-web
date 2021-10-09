@@ -1,9 +1,23 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import useProfile from '../composables/useProfile'
-
+import useGetPlaylists from '../composables/useGetPlaylists'
 const { isLoggedIn } = useProfile()
+const { playlists } = useGetPlaylists()
 
 const routes = [
+  {
+    path: '/',
+    beforeEnter: (_to, _from) => {
+      // 访问 / 默认转到第一个歌单页面
+      if (!playlists.value.length) {
+        return false
+      }
+      const firstPlaylist = playlists.value[0]
+      router.push({
+        path: `/playlists/${firstPlaylist.id}`,
+      })
+    },
+  },
   {
     path: '/playlists/:playlistId',
     name: 'Playlists',
