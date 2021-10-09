@@ -112,6 +112,7 @@ import useProfile from '../composables/useProfile'
 import { useRouter } from 'vue-router'
 import useGetCloudSongs from '../composables/useGetCloudSongs'
 import useGetPlaylists from '../composables/useGetPlaylists'
+import useLoginStatus from '../composables/useLoginStatus'
 
 export default defineComponent({
   setup() {
@@ -122,6 +123,7 @@ export default defineComponent({
 
     const { getCloudSongs } = useGetCloudSongs()
     const { getMyPlayLists } = useGetPlaylists()
+    const { setIsLoggedIn } = useLoginStatus()
 
     // 跳转到首页
     const redirectToHome = () => {
@@ -138,6 +140,7 @@ export default defineComponent({
       await getMyPlayLists()
       await getCloudSongs()
 
+      setIsLoggedIn()
       redirectToHome()
     }
 
