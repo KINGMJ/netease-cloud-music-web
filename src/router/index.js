@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import useProfile from '../composables/useProfile'
+import useLoginStatus from '../composables/useLoginStatus'
 import useGetPlaylists from '../composables/useGetPlaylists'
-const { isLoggedIn } = useProfile()
+const { isLoggedIn } = useLoginStatus()
 
 const routes = [
   {
@@ -39,7 +39,7 @@ const routes = [
     name: 'Login',
     component: () => import('../views/Login.vue'),
     beforeEnter: (_to, _from) => {
-      if (isLoggedIn()) {
+      if (isLoggedIn.value) {
         router.push('/')
       }
     },
@@ -56,7 +56,7 @@ router.beforeEach((to, from) => {
   if (to.path == '/login' || from.path == '/login') {
     return
   }
-  if (!isLoggedIn()) {
+  if (!isLoggedIn.value) {
     router.push('/login')
   }
 })
