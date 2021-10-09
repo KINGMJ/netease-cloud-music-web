@@ -28,12 +28,14 @@ export default {
       if (!isLoggedIn()) {
         return
       }
+
       await getMyPlayLists()
-      if (playlists.value.length == 0) {
-        return
-      }
       await getCloudSongs()
-      if (window.location.hash == '#/') {
+
+      const hash = window.location.hash
+
+      // 非歌单和云盘页面，都要跳转到第一个歌单页面
+      if (!~hash.indexOf('#/playlists') && hash !== '#/cloud') {
         router.push({
           path: `/playlists/${playlists.value[0].id}`,
         })

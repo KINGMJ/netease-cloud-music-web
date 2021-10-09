@@ -110,6 +110,8 @@ import { defineComponent, ref } from 'vue'
 import Api from '../api'
 import useProfile from '../composables/useProfile'
 import { useRouter } from 'vue-router'
+import useGetCloudSongs from '../composables/useGetCloudSongs'
+import useGetPlaylists from '../composables/useGetPlaylists'
 
 export default defineComponent({
   setup() {
@@ -118,18 +120,25 @@ export default defineComponent({
     const { setProfile } = useProfile()
     const router = useRouter()
 
+    const { getCloudSongs } = useGetCloudSongs()
+    const { getMyPlayLists } = useGetPlaylists()
+
+    // 跳转到首页
+    const redirectToHome = () => {
+      router.push({ path: '/' })
+    }
+
     const login = async () => {
       const res = await Api.Login.phoneLogin({ phone: phone.value, password: password.value })
       if (res.code !== 200) {
         return
       }
       setProfile({ ...res.profile })
-      redirectToHome()
-    }
 
-    // 跳转到首页
-    const redirectToHome = () => {
-      router.push({ path: '/' })
+      await getMyPlayLists()
+      await getCloudSongs()
+
+      redirectToHome()
     }
 
     return {
