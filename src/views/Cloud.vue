@@ -75,6 +75,7 @@ import { PencilAltIcon, CogIcon, FilterIcon, SortAscendingIcon, SortDescendingIc
 import useGetCloudSongs from '../composables/useGetCloudSongs'
 import useUtils from '../composables/useUtils'
 import useSortSongs from '../composables/useSortSongs'
+import useProfile from '../composables/useProfile'
 
 export default defineComponent({
   components: {
@@ -87,6 +88,7 @@ export default defineComponent({
     const { cloudSongs } = useGetCloudSongs()
     const { timeFormat, fileTypeFormat, fileSizeFormat } = useUtils()
     const { sortSequence, sortBySize, sortByType } = useSortSongs()
+    const { uid } = useProfile()
 
     const tableCol = computed(() => {
       return [
@@ -115,7 +117,6 @@ export default defineComponent({
     const cloudSongsWithPlaylist = ref([])
     // 不在歌单中的云盘歌曲
     const notInPlaylistSongs = ref([])
-    const uid = 372063478
 
     // 获取云盘的音乐
     const getCloudData = () => {
@@ -158,10 +159,10 @@ export default defineComponent({
 
     // 获取我创建的歌单里的所有歌曲
     const getAllPlayListSongs = async () => {
-      const res = await Api.User.getPlaylist({ uid })
+      const res = await Api.User.getPlaylists({ uid: uid.value })
       // 获取我创建的歌单
       const playlistIds = res.playlist.reduce((prev, current) => {
-        if (current.creator.userId == uid) {
+        if (current.creator.userId == uid.value) {
           prev.push(current.id)
         }
         return prev

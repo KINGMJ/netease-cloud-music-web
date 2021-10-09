@@ -1,9 +1,8 @@
 import { ref, computed } from 'vue'
 import Api from '../api'
 import Constant from '../constant'
+import useProfile from '../composables/useProfile'
 
-// 用户id
-const uid = 372063478
 // 要上传的歌单歌曲
 const uploadedSong = ref(null)
 
@@ -11,6 +10,7 @@ const uploadedSong = ref(null)
  * 上传歌曲
  */
 export default function useUploadSong() {
+  const { uid } = useProfile()
   let fileUpdateTime = {}
 
   const uploadSong = event => {
@@ -58,7 +58,7 @@ export default function useUploadSong() {
   }
 
   const matchSong = async (cloud_song_id, match_song_id) => {
-    await Api.Cloud.matchSong({ uid, cloud_song_id, match_song_id })
+    await Api.Cloud.matchSong({ uid: uid.value, cloud_song_id, match_song_id })
   }
 
   const setUploadedSong = song => {

@@ -7,20 +7,23 @@
 <script>
 import { defineComponent, ref } from 'vue'
 import Api from '../api'
+import useProfile from '../composables/useProfile'
+
 export default defineComponent({
   setup() {
-    const uid = 372063478
+    const { uid } = useProfile()
     const cloudSongId = ref(null)
     const playlistSongId = ref(null)
 
     const matchSong = async () => {
       const res = await Api.Cloud.matchSong({
-        uid,
+        uid: uid.value,
         cloud_song_id: cloudSongId.value,
         match_song_id: playlistSongId.value,
       })
       console.log(res)
     }
+
     return {
       matchSong,
       cloudSongId,
