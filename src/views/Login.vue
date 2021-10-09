@@ -31,71 +31,19 @@
               <div>
                 <label class="block text-sm font-medium text-gray-700"> 手机号 </label>
                 <div class="mt-1">
-                  <input
-                    type="text"
-                    v-model="phone"
-                    class="
-                      appearance-none
-                      block
-                      w-full
-                      px-3
-                      py-2
-                      border border-gray-300
-                      rounded-md
-                      shadow-sm
-                      placeholder-gray-400
-                      focus:outline-none focus:ring-green-500 focus:border-green-500
-                      sm:text-sm
-                    "
-                  />
+                  <input type="text" v-model="phone" class="input" />
                 </div>
               </div>
 
               <div class="space-y-1">
                 <label class="block text-sm font-medium text-gray-700"> 密码 </label>
                 <div class="mt-1">
-                  <input
-                    type="password"
-                    v-model="password"
-                    class="
-                      appearance-none
-                      block
-                      w-full
-                      px-3
-                      py-2
-                      border border-gray-300
-                      rounded-md
-                      shadow-sm
-                      placeholder-gray-400
-                      focus:outline-none focus:ring-green-500 focus:border-green-500
-                      sm:text-sm
-                    "
-                  />
+                  <input type="password" v-model="password" class="input" />
                 </div>
               </div>
 
               <div>
-                <button
-                  class="
-                    w-full
-                    flex
-                    justify-center
-                    py-2
-                    px-4
-                    border border-transparent
-                    rounded-md
-                    shadow-sm
-                    text-sm
-                    font-medium
-                    text-white
-                    bg-green-500
-                    hover:bg-green-600
-                    focus:outline-none
-                  "
-                  @click="login"
-                >
-                  登录
-                </button>
+                <button class="button" @click="login">登录</button>
               </div>
             </div>
           </div>
@@ -152,3 +100,15 @@ export default defineComponent({
   },
 })
 </script>
+
+<style scoped>
+.input {
+  @apply appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm
+  placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm;
+}
+
+.button {
+  @apply w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm 
+  font-medium text-white bg-green-500 hover:bg-green-600 focus:outline-none;
+}
+</style>
